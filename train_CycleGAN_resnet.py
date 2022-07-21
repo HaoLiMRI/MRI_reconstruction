@@ -369,7 +369,7 @@ if args.perform_inference:
     checkpoint = torch.load(args.weights)
     model_Upsample.load_state_dict(checkpoint['model_Upsample'])
     model_Upsample.eval()
-    filenames = os.listdir(args.dir_test)
+    filenames = sorted(os.listdir(os.path.join(args.dir_test, 'Evaluation')))
     for filename in tqdm(filenames):
         if '.mat' in filename:
             eval_loader = get_eval_dataloader(args.dir_test, filename, args.batch_size)
