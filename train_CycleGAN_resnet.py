@@ -121,11 +121,11 @@ if args.checkpoint:
     model_Disc_img_LR.load_state_dict(checkpoint['model_Disc_img_LR'])
     model_Disc_img_HR.load_state_dict(checkpoint['model_Disc_img_HR'])
 
-    optimizer_D.load_state_dict(checkpoint['optimizer_D'])
-    optimizer_G.load_state_dict(checkpoint['optimizer_G'])
+#    optimizer_D.load_state_dict(checkpoint['optimizer_D'])
+#    optimizer_G.load_state_dict(checkpoint['optimizer_G'])
 
-    scheduler_D.load_state_dict(checkpoint['scheduler_D'])
-    scheduler_G.load_state_dict(checkpoint['scheduler_G'])
+#    scheduler_D.load_state_dict(checkpoint['scheduler_D'])
+#    scheduler_G.load_state_dict(checkpoint['scheduler_G'])
 
     start_epoch = checkpoint['epoch']
 else:
@@ -352,11 +352,11 @@ for epoch in range(start_epoch, args.epochs):
             'model_Disc_img_LR': model_Disc_img_LR.state_dict(),
             'model_Disc_img_HR': model_Disc_img_HR.state_dict(),
 
-            'optimizer_D': optimizer_D.state_dict(),
-            'optimizer_G': optimizer_G.state_dict(),
+#            'optimizer_D': optimizer_D.state_dict(),
+#            'optimizer_G': optimizer_G.state_dict(),
 
-            'scheduler_D': scheduler_D.state_dict(),
-            'scheduler_G': scheduler_G.state_dict(),
+#            'scheduler_D': scheduler_D.state_dict(),
+#            'scheduler_G': scheduler_G.state_dict(),
         }, weights_file)
         print('save weights of epoch %d' % (epoch+1))
         log_file.write("Network saved! \n")
