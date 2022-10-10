@@ -1,1 +1,1 @@
-# MRI_reconstruction
+# MRI_Motion_Artifact_Removing_Project
