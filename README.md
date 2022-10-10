@@ -1,1 +1,1 @@
-# MRI_Motion_Artifact_Removing_Project
+# MRI_De_Motion_Artifact_Project
