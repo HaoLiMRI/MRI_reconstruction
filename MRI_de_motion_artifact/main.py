@@ -29,7 +29,12 @@ if __name__ == '__main__':
     # print(mean_ssim, mean_psnr)
 
     # define model
-    model = cycleGAN(args, data_loader)
+    if args.model == 'mdva_gan':
+        model = mdvaGAN(args, data_loader)
+    if args.model == 'cycle_gan':
+        model = cycleGAN(args, data_loader)
+    else:
+        raise ValueError
 
     model.train()
 
