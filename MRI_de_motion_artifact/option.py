@@ -36,6 +36,7 @@ parser.add_argument('--lambda_gp', type=float, default=0, help='gradient penalty
 parser.add_argument('--GPloss', type=bool, default=False, help='whether to use GPloss')      # false
 
 # model specificaions
+parser.add_argument('--model', type=str, default='cycle_gan')
 parser.add_argument('--n_hidden_feats', type=int, default=64, help='number of feature vectors in hidden layer')
 parser.add_argument('--input_channels', type=int, default=1, help='number of input slice numbers')
 parser.add_argument('--output_channels', type=int, default=1, help='number of output slice numbers')
