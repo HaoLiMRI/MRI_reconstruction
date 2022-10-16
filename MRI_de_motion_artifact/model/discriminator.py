@@ -18,39 +18,39 @@ class DiscriminatorVGG(nn.Module):
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d, d, kernel_size=(3, 3), stride=(2, 2), padding=1, bias=False),  # state size. 64 x 64 x 64
-            # nn.BatchNorm2d(d),
+            nn.BatchNorm2d(d),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d, d * 2, kernel_size=(3, 3), stride=(1, 1), padding=1, bias=False),
-            # nn.BatchNorm2d(d * 2),
+            nn.BatchNorm2d(d * 2),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d * 2, d * 2, kernel_size=(3, 3), stride=(2, 2), padding=1, bias=False),  # state size. 128 x 32 x 32
-            # nn.BatchNorm2d(d * 2),
+            nn.BatchNorm2d(d * 2),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d * 2, d * 4, kernel_size=(3, 3), stride=(1, 1), padding=1, bias=False),
-            # nn.BatchNorm2d(d * 4),
+            nn.BatchNorm2d(d * 4),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d * 4, d * 4, kernel_size=(3, 3), stride=(2, 2), padding=1, bias=False),  # state size. 256 x 16 x 16
-            # nn.BatchNorm2d(d * 4),
+            nn.BatchNorm2d(d * 4),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d * 4, d * 8, kernel_size=(3, 3), stride=(1, 1), padding=1, bias=False),
-            # nn.BatchNorm2d(d * 8),
+            nn.BatchNorm2d(d * 8),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d * 8, d * 8, kernel_size=(3, 3), stride=(2, 2), padding=1, bias=False),  # state size. 512 x 8 x 8
-            # nn.BatchNorm2d(d * 8),
+            nn.BatchNorm2d(d * 8),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d * 8, d * 8, kernel_size=(3, 3), stride=(1, 1), padding=1, bias=False),
-            # nn.BatchNorm2d(d * 8),
+            nn.BatchNorm2d(d * 8),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
 
             nn.Conv2d(d * 8, d * 8, kernel_size=(3, 3), stride=(2, 2), padding=1, bias=False),  # state size. 512 x 4 x 4
-            # nn.BatchNorm2d(d * 8),
+            nn.BatchNorm2d(d * 8),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
             nn.AdaptiveAvgPool2d((1, 1))
         )
