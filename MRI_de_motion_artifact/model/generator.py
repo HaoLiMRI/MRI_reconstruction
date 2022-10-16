@@ -451,7 +451,7 @@ class Decoder_Id_RCAN(nn.Module):
         """
         modules_tail.append(conv(num_feat, num_out_ch, kernel_size))
         # modules_tail.append(nn.ReLU(inplace=True))
-        modules_tail.append(nn.Tanh())
+        # modules_tail.append(nn.Tanh())
         # --------------------------------------we may NOT need this section------------------------------------------------------- #
         """ # don't know exactly what is doing here. However, it seems shifting the "rgb_range" to be somewhere in the mean
         self.add_mean = MeanShift(args.rgb_range, rgb_mean, rgb_std, 1) """
