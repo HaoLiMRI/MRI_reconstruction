@@ -1,5 +1,7 @@
 from model.cycle_gan import cycleGAN
 from model.mdva_gan import mdvaGAN
+from model.ISCL import ISCL
+from model.UIDnet import UIDnet
 from dataset.data_loader import get_dataloader, Dataset
 from option import args
 from tools import utils, visualize
@@ -11,6 +13,7 @@ if __name__ == '__main__':
     # device setting
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
     print('using GPU %s' % args.gpu_id)
+    print('model: {}'.format(args.model))
 
     if args.manual_seed is not None:
         utils.init_random_seed(args.manual_seed)
@@ -25,14 +28,18 @@ if __name__ == '__main__':
 
     # Load datasets
     data_loader = get_dataloader(args.main_datapath, args.batch_size)
-    # mean_ssim, mean_psnr = utils.cal_original_ssim_psnr(data_loader[-1])     # 0.8824   30.41
-    # print(mean_ssim, mean_psnr)
+    mean_ssim, mean_psnr = utils.cal_original_ssim_psnr(data_loader[-1])     # 0.8824   30.41
+    print(mean_ssim, mean_psnr)
 
     # define model
     if args.model == 'mdva_gan':
         model = mdvaGAN(args, data_loader)
-    if args.model == 'cycle_gan':
+    elif args.model == 'cycle_gan':
         model = cycleGAN(args, data_loader)
+    elif args.model == 'ISCL':
+        model = ISCL(args, data_loader)
+    elif args.model == 'UIDnet':
+        model = UIDnet(args, data_loader)
     else:
         raise ValueError
 
