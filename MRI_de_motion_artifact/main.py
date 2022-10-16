@@ -32,13 +32,13 @@ if __name__ == '__main__':
     print(mean_ssim, mean_psnr)
 
     # define model
-    if args.model == 'mdva_gan':
+    if args.model == 'mdva_gan':    # Our proposed method
         model = mdvaGAN(args, data_loader)
-    elif args.model == 'cycle_gan':
+    elif args.model == 'cycle_gan': # baseline method cycle_gan
         model = cycleGAN(args, data_loader)
-    elif args.model == 'ISCL':
+    elif args.model == 'ISCL':      # baseline method ISCL, see TMI 2021 paper "2021. ISCL: Interdependent self-cooperative learning for unpaired image denoising" for more details.
         model = ISCL(args, data_loader)
-    elif args.model == 'UIDnet':
+    elif args.model == 'UIDnet':    # baseline method UIDNet, see AAAI 2020 paper "2020. End-to-end unparied image denoising with conditional adversarial networks" for more details.
         model = UIDnet(args, data_loader)
     else:
         raise ValueError
