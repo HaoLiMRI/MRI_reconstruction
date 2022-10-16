@@ -1,8 +1,8 @@
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.autograd as autograd
-from math import exp
 import torch.nn.functional as F
+from math import exp
 import torch
 import random
 import numpy as np
@@ -197,3 +197,17 @@ def normalize(img):
     volume = volume.astype("float32")
 
     return volume
+
+##################################################################
+# random noise z
+##################################################################
+def get_random_sample(shape, method = 'normal'):
+    if method == 'uniform':
+        sample_z = np.random.uniform(-1, 1, size = shape).astype(np.float32)
+    elif method == 'random':
+        sample_z = 2.0 * np.random.random(size = shape) - 1.0
+    else:
+        sample_z = np.random.normal(size = shape)
+        sample_z = (sample_z - np.min(sample_z)) / (np.max(sample_z) - np.min(sample_z))
+        sample_z = 2.0 * sample_z - 1.0
+    return sample_z
