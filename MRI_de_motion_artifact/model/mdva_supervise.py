@@ -101,8 +101,7 @@ class mdvaGAN(object):
                 self.disc_B.zero_grad()
                 for i in range(self.args.n_disc):
                     # generator output (feature domain)
-                    error_map = self.gen_A2B(input_A)
-                    gen_B = input_A - error_map
+                    gen_B = input_A - self.gen_A2B(input_A)
                     cyclic_A = self.gen_B2A(gen_B)
 
                     # output of discriminator (image domain)
@@ -131,8 +130,7 @@ class mdvaGAN(object):
                 self.gen_B2A.zero_grad()
                 for i in range(self.args.n_gen):
                     # generator output (feature domain)
-                    error_map = self.gen_A2B(input_A)
-                    gen_B = input_A - error_map
+                    gen_B = input_A - self.gen_A2B(input_A)
                     cyclic_A = self.gen_B2A(gen_B)
 
                     # output of discriminator (image domain)
@@ -218,8 +216,7 @@ class mdvaGAN(object):
             for i, data in enumerate(val_loader):
                 A, B = data
                 input_A, input_B = A.float().cuda(), B.float().cuda()
-                error_map = self.gen_A2B(input_A)
-                gen_B = input_A - error_map
+                gen_B = input_A - self.gen_A2B(input_A)
                 ssim_eval += self.loss_ssim(gen_B, input_B).item()
                 psnr_eval += utils.calc_psnr_for_mri_image(gen_B, input_B).item()
 
@@ -246,8 +243,7 @@ class mdvaGAN(object):
         with torch.no_grad():
             for i in range(len(test_set)):
                 input_A = torch.tensor(np.array([test_set[i]])).float().cuda()
-                error_map = self.gen_A2B(input_A)
-                gen_B = input_A - error_map
+                gen_B = input_A - self.gen_A2B(input_A)
                 gen_B = gen_B[0].permute(1, 2, 0).cpu().numpy()
                 np.savez(os.path.join(self.args.result_path, test_set.filename[i]), pred=gen_B)
 

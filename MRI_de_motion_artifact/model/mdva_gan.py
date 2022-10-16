@@ -21,7 +21,6 @@ class mdvaGAN(object):
         # Loss criterion
         self.loss_L1 = nn.L1Loss().cuda()
         self.loss_MSE = nn.MSELoss().cuda()
-        self.loss_adversarial = nn.BCEWithLogitsLoss().cuda()
         self.loss_ssim = utils.SSIM_loss().cuda()
         self.gp = utils.calc_gradient_penalty
 
@@ -33,8 +32,8 @@ class mdvaGAN(object):
 
         # optimizer
         params_G = list(self.gen_A2B.parameters()) + list(self.gen_B2A.parameters())
-        self.optimizer_G = optim.Adam(params_G, lr=args.lr_G, betas=(args.beta1, args.beta2), weight_decay=args.weight_decay, amsgrad=True)
         params_D = list(self.disc_A.parameters()) + list(self.disc_B.parameters())
+        self.optimizer_G = optim.Adam(params_G, lr=args.lr_G, betas=(args.beta1, args.beta2), weight_decay=args.weight_decay, amsgrad=True)
         self.optimizer_D = optim.Adam(params_D, lr=args.lr_D, betas=(args.beta1, args.beta2), weight_decay=args.weight_decay, amsgrad=True)
 
         # Scheduler
@@ -101,8 +100,7 @@ class mdvaGAN(object):
                 self.disc_B.zero_grad()
                 for i in range(self.args.n_disc):
                     # generator output (feature domain)
-                    error_map = self.gen_A2B(input_A)
-                    gen_B = input_A - error_map
+                    gen_B = input_A - self.gen_A2B(input_A)
                     cyclic_A = self.gen_B2A(gen_B)
 
                     # output of discriminator (image domain)
@@ -119,20 +117,19 @@ class mdvaGAN(object):
                     # discriminator weight update
                     loss_D_total = loss_disc_A_cycle + loss_disc_B_sty
                     if self.args.GPloss:
-                        loss_disc_A_gp = self.gp(self.disc_A, input_A.data, cyclic_A.data, self.args.batch_size) * self.args.lambda_gp
-                        loss_disc_B_gp = self.gp(self.disc_B, input_B.data, gen_B.data, self.args.batch_size) * self.args.lambda_gp
+                        loss_disc_A_gp = self.gp(self.disc_A, input_A.data, cyclic_A.detach().data, self.args.batch_size) * self.args.lambda_gp
+                        loss_disc_B_gp = self.gp(self.disc_B, input_B.data, gen_B.detach().data, self.args.batch_size) * self.args.lambda_gp
                         loss_D_total += loss_disc_A_gp + loss_disc_B_gp
                     loss_D_total.backward()
                     self.optimizer_D.step()
                 ##########################
                 # (2) Update Gen network #
-                ###########################
+                ##########################
                 self.gen_A2B.zero_grad()
                 self.gen_B2A.zero_grad()
                 for i in range(self.args.n_gen):
                     # generator output (feature domain)
-                    error_map = self.gen_A2B(input_A)
-                    gen_B = input_A - error_map
+                    gen_B = input_A - self.gen_A2B(input_A)
                     cyclic_A = self.gen_B2A(gen_B)
 
                     # output of discriminator (image domain)
@@ -212,10 +209,8 @@ class mdvaGAN(object):
             print('Validation:')
             ssim_eval, psnr_eval = 0, 0
             for i, data in enumerate(val_loader):
-                A, B = data
-                input_A, input_B = A.float().cuda(), B.float().cuda()
-                error_map = self.gen_A2B(input_A)
-                gen_B = input_A - error_map
+                input_A, input_B = data[0].float().cuda(), data[1].float().cuda()
+                gen_B = input_A - self.gen_A2B(input_A)
                 ssim_eval += self.loss_ssim(gen_B, input_B).item()
                 psnr_eval += utils.calc_psnr_for_mri_image(gen_B, input_B).item()
 
@@ -226,11 +221,9 @@ class mdvaGAN(object):
                     visualize.display_images(
                         images = [image_B, image_A, image_A-image_B, image_out-image_B, image_A-image_out, image_out],
                         titles = ['motion free', 'motion simulation', 'error map between 1 and 2', 'error map between 1 and 6', 'error map between 2 and 6', 'after correction'],
-                        dir_save = os.path.join(self.args.snap_path, 'visualize', 'epoch={}.jpg'.format(epoch+1)),
-                    )
+                        dir_save = os.path.join(self.args.snap_path, 'visualize', 'epoch={}.jpg'.format(epoch+1)))
             mean_ssim = ssim_eval / len(val_loader)
             mean_psnr = psnr_eval / len(val_loader)
-
         return mean_ssim, mean_psnr
 
     def eval(self, test_set):
@@ -242,8 +235,7 @@ class mdvaGAN(object):
         with torch.no_grad():
             for i in range(len(test_set)):
                 input_A = torch.tensor(np.array([test_set[i]])).float().cuda()
-                error_map = self.gen_A2B(input_A)
-                gen_B = input_A - error_map
+                gen_B = input_A - self.gen_A2B(input_A)
                 gen_B = gen_B[0].permute(1, 2, 0).cpu().numpy()
                 np.savez(os.path.join(self.args.result_path, test_set.filename[i]), pred=gen_B)
 
